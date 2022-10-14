@@ -10,7 +10,7 @@ void v_alloc_table_fill_34(int iSize) {
     table = new int[iSize];
 
     for (int i = 0; i < iSize; i++) {
-        table[i] = number_34;
+        table[i] = NUMBER_34;
     }
 
     for (int i = 0; i < iSize; i++) {
@@ -22,25 +22,25 @@ void v_alloc_table_fill_34(int iSize) {
 }
 
 bool b_alloc_table_2_dim(int **&piTable, int iSizeX, int iSizeY) {
-    if (iSizeX < 0 || iSizeY < 0) {
+    if (iSizeX < 0 || iSizeY < 0 || piTable == NULL) {
         return false;
     }
 
-    piTable = new int*[iSizeX];
+    piTable = new int*[iSizeY];
 
-    for (int i = 0; i < iSizeX; i++) {
-        piTable[i] = new int[iSizeY];
+    for (int i = 0; i < iSizeY; i++) {
+        piTable[i] = new int[iSizeX];
     }
 
     return true;
 }
 
-bool b_dealloc_table_2_dim(int **piTable, int iSizeX) {
-    if (iSizeX < 0) {
+bool b_dealloc_table_2_dim(int **piTable, int iSizeY) {
+    if (iSizeY < 0 || piTable == NULL) {
         return false;
     }
 
-    for (int i = 0; i < iSizeX; i++) {
+    for (int i = 0; i < iSizeY; i++) {
         delete piTable[i];
     }
 
@@ -52,28 +52,28 @@ bool b_dealloc_table_2_dim(int **piTable, int iSizeX) {
 class CTable {
 public:
     CTable() {
-        s_name = default_s_name;
-        len = default_length;
+        s_name = DEFAULT_S_NAME;
+        len = DEFAULT_LEN;
         array = new int[len];
-        std::cout << "bezp: " << s_name << std::endl;
+        std::cout << DEFAULT_STRING << s_name << std::endl;
     }
 
     CTable(std::string sName, int iTableLen) {
         s_name = sName;
         len = iTableLen;
         array = new int[len];
-        std::cout << "parametr: " << s_name << std::endl;
+        std::cout << PARAMETER_STRING << s_name << std::endl;
     }
 
     CTable (CTable &pcOther) {
         s_name = pcOther.s_name;
         len = pcOther.len;
         array = new int[len];
-        std::cout << "kopiuj: " << s_name << std::endl;
+        std::cout << COPY_STRING << s_name << std::endl;
     }
 
     ~CTable() {
-        std::cout << "usuwam: " << s_name << std::endl;
+        std::cout << DELETE_STRING << s_name << std::endl;
     }
 
     void vSetName(std::string sName) {
@@ -95,60 +95,82 @@ public:
         return clone;
     }
 
+    void printSize() {
+        std::cout << SIZE_STRING << len << std::endl;
+    }
+
 private:
     std::string s_name;
     int len;
     int *array;
 };
 
+void v_mod_tab(CTable *pcTab, int iNewSize) {
+    pcTab->bSetNewSize(iNewSize);
+    pcTab->printSize();
+}
+
+void v_mod_tab(CTable c_tab, int iNewSize) {
+    c_tab.bSetNewSize(iNewSize);
+    c_tab.printSize();
+}
+
 int main() {
     // ZAD 1
-    std::cout << "ZAD 1" << std::endl;
-    v_alloc_table_fill_34(5);
+    std::cout << ZAD1 << std::endl;
+    v_alloc_table_fill_34(SIZE_X);
 
     // ZAD 2
-    std::cout << "\nZAD 2" << std::endl;
+    std::cout << ZAD2 << std::endl;
 
     int **piTable;
-    b_alloc_table_2_dim(piTable, 5, 3);
+    b_alloc_table_2_dim(piTable, SIZE_X, SIZE_Y);
 
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 3; j++) {
-            piTable[i][j] = 2;
+    for (int i = 0; i < SIZE_Y; i++) {
+        for (int j = 0; j < SIZE_X; j++) {
+            piTable[i][j] = 1;
         }
     }
 
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < SIZE_Y; i++) {
+        for (int j = 0; j < SIZE_X; j++) {
             std::cout << piTable[i][j] << "\t";
         }
         std::cout << std::endl;
     }
 
     // ZAD 3
-    std::cout << "\nZAD 3" << std::endl;
+    std::cout << ZAD3 << std::endl;
 
-    b_dealloc_table_2_dim(piTable, 4);
+    b_dealloc_table_2_dim(piTable, SIZE_Y);
 
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 3; j++) {
-            std::cout << piTable[i][j] << "\t";
-        }
-        std::cout << std::endl;
-    }
+//    for (int i = 0; i < SIZE_X; i++) {
+//        for (int j = 0; j < SIZE_Y; j++) {
+//            std::cout << piTable[i][j] << "\t";
+//        }
+//        std::cout << std::endl;
+//    }
 
     // ZAD 4
-    std::cout << "\nZAD 4" << std::endl;
+    std::cout << ZAD4 << std::endl;
 
     CTable *defaultCTable = new CTable();
-    CTable *parameterCTable = new CTable("Parameter", 6);
+    CTable *parameterCTable = new CTable("Parameter", SIZE_X);
     CTable *cloneCTable = new CTable(*parameterCTable);
 
     delete defaultCTable;
+    delete parameterCTable;
+    delete cloneCTable;
 
     CTable c_tab;
     CTable *pcCloneCTable;
     pcCloneCTable = c_tab.pcClone();
+
+    int iNewSize = 2;
+    v_mod_tab(c_tab, iNewSize);
+    v_mod_tab(pcCloneCTable, iNewSize);
+
+    delete pcCloneCTable;
 
     return 0;
 }
