@@ -1,6 +1,7 @@
 #include <iostream>
 #include "main.h"
 
+//ZAD 1
 void v_alloc_table_fill_34(int iSize) {
     if (iSize < 0) {
         return;
@@ -18,9 +19,9 @@ void v_alloc_table_fill_34(int iSize) {
     }
     std::cout << std::endl;
 
-    delete [] table;
+    delete table;
 }
-
+//ZAD 2
 bool b_alloc_table_2_dim(int **&piTable, int iSizeX, int iSizeY) {
     if (iSizeX < 0 || iSizeY < 0 || piTable == NULL) {
         return false;
@@ -34,7 +35,7 @@ bool b_alloc_table_2_dim(int **&piTable, int iSizeX, int iSizeY) {
 
     return true;
 }
-
+//ZAD 3
 bool b_dealloc_table_2_dim(int **piTable, int iSizeY) {
     if (iSizeY < 0 || piTable == NULL) {
         return false;
@@ -48,7 +49,7 @@ bool b_dealloc_table_2_dim(int **piTable, int iSizeY) {
 
     return true;
 }
-
+//ZAD 4
 class CTable {
 public:
     CTable() {
@@ -66,7 +67,7 @@ public:
     }
 
     CTable (CTable &pcOther) {
-        s_name = pcOther.s_name;
+        s_name = pcOther.s_name + "_copy";
         len = pcOther.len;
         array = new int[len];
         std::cout << COPY_STRING << s_name << std::endl;
@@ -107,14 +108,12 @@ private:
 
 void v_mod_tab(CTable *pcTab, int iNewSize) {
     pcTab->bSetNewSize(iNewSize);
-    pcTab->printSize();
 }
 
 void v_mod_tab(CTable c_tab, int iNewSize) {
     c_tab.bSetNewSize(iNewSize);
-    c_tab.printSize();
 }
-
+// TESTY
 int main() {
     // ZAD 1
     std::cout << ZAD1 << std::endl;
@@ -142,20 +141,13 @@ int main() {
     // ZAD 3
     std::cout << ZAD3 << std::endl;
 
-    b_dealloc_table_2_dim(piTable, SIZE_Y);
-
-//    for (int i = 0; i < SIZE_X; i++) {
-//        for (int j = 0; j < SIZE_Y; j++) {
-//            std::cout << piTable[i][j] << "\t";
-//        }
-//        std::cout << std::endl;
-//    }
+    std::cout << b_dealloc_table_2_dim(piTable, SIZE_Y) << std::endl;
 
     // ZAD 4
     std::cout << ZAD4 << std::endl;
 
     CTable *defaultCTable = new CTable();
-    CTable *parameterCTable = new CTable("Parameter", SIZE_X);
+    CTable *parameterCTable = new CTable("parameter", SIZE_X);
     CTable *cloneCTable = new CTable(*parameterCTable);
 
     delete defaultCTable;
@@ -168,7 +160,9 @@ int main() {
 
     int iNewSize = 2;
     v_mod_tab(c_tab, iNewSize);
+    c_tab.printSize();
     v_mod_tab(pcCloneCTable, iNewSize);
+    pcCloneCTable->printSize();
 
     delete pcCloneCTable;
 

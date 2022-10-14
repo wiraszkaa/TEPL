@@ -1,5 +1,6 @@
+//ZAD 1
 const int NUMBER_34 = 34;
-
+//ZAD 4
 const int DEFAULT_LEN = 5;
 const std::string DEFAULT_S_NAME = "default";
 const std::string DEFAULT_STRING = "bezp: ";
