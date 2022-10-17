@@ -1,5 +1,6 @@
 #include <iostream>
 #include "main.h"
+#include "cmath"
 
 //ZAD 1
 void v_alloc_table_fill_34(int iSize) {
@@ -77,7 +78,10 @@ public:
     CTable (CTable &pcOther) {
         s_name = pcOther.s_name + "_copy";
         len = pcOther.len;
-        array = pcOther.array;
+        array = new int[len];
+        for (int i = 0; i < len; i++) {
+            array[i] = pcOther.array[i];
+        }
         std::cout << COPY_STRING << s_name << std::endl;
     }
 
@@ -96,17 +100,32 @@ public:
             return false;
         }
         len = iTableLen;
-        array = new int[len];
+        int *newArray = new int[len];
+        for (int i = 0; i < std::min(len, iTableLen); i++) {
+            newArray[i] = array[i];
+        }
+        array = newArray;
 
         return true;
     }
 
     CTable *pcClone() {
-        return new CTable(s_name, len);
+        return new CTable(*this);
     }
 
     void printSize() {
         std::cout << SIZE_STRING << len << std::endl;
+    }
+
+    void printArray() {
+        for (int i = 0; i < len; i++) {
+            std::cout << array[i] << "\t";
+        }
+        std::cout << std::endl;
+    }
+
+    void setValue(int offSet, int value) {
+        array[offSet] = value;
     }
 
 private:
