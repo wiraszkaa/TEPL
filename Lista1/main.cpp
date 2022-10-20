@@ -142,7 +142,7 @@ void v_mod_tab(CTable c_tab, int iNewSize) {
     c_tab.bSetNewSize(iNewSize);
 }
 // TESTY
-int main() {
+/*int main() {
     // ZAD 1
     std::cout << "ZAD1" << std::endl;
     int size = 3;
