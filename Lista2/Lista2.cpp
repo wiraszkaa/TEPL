@@ -27,10 +27,10 @@ public:
         std::cout << COPY_STRING << s_name << std::endl;
     }
 
-    ~CTable() {
-        delete array;
-        std::cout << DELETE_STRING << s_name << std::endl;
-    }
+//    ~CTable() {
+//        delete array;
+//        std::cout << DELETE_STRING << s_name << std::endl;
+//    }
 
     void operator=(const CTable &pcOther) {
         array = pcOther.array;
@@ -141,7 +141,7 @@ public:
     }
 
     Matrix operator+(Matrix &pcOther) {
-        Matrix resultMatrix;
+        Matrix resultMatrix = Matrix(width, height);
 
         if (width == pcOther.width && height == pcOther.height) {
             for (int i = 0; i < height; i++) {
@@ -173,52 +173,54 @@ private:
 
 
 int main() {
-//    //ZAD1
-//    std::cout << "\nZAD1" << std::endl;
-//
-//    CTable c_tab_0, c_tab_1;
-//    c_tab_0.bSetNewSize(6);
-//    c_tab_1.bSetNewSize(4);
-//    c_tab_0 = c_tab_1;
-//    c_tab_0.printSize();
-//    c_tab_1.printSize();
-//
-//    //ZAD2
-//    std::cout << "\nZAD2" << std::endl;
-//
-//    //ZAD3
-//    std::cout << "\nZAD3" << std::endl;
-//
-//    c_tab_1.vSetValueAt(2, 123);
-//    c_tab_0.vPrint();
-//    c_tab_1.vPrint();
-//
-//    //ZAD4
-//    std::cout << "\nZAD4" << std::endl;
-//
-//    c_tab_0.vSetValueAt(0, 0);
-//    c_tab_0.vSetValueAt(1, 1);
-//    c_tab_0.vSetValueAt(3, 3);
-//
-//    CTable c_tab_2;
-//    c_tab_2 = c_tab_0 + c_tab_1;
-//    c_tab_2.vPrint();
+    //ZAD1
+    std::cout << "\nZAD1" << std::endl;
 
+    CTable c_tab_0, c_tab_1;
+    c_tab_0.bSetNewSize(6);
+    c_tab_1.bSetNewSize(4);
+    c_tab_0 = c_tab_1;
+    c_tab_0.printSize();
+    c_tab_1.printSize();
 
+    //ZAD2
+    std::cout << "\nZAD2" << std::endl;
 
-    int **array = new int *[3];
-    for (int i = 0; i < 3; i++) {
-        array[i] = new int[3];
+    //ZAD3
+    std::cout << "\nZAD3" << std::endl;
+
+    c_tab_1.vSetValueAt(2, 123);
+    c_tab_0.vPrint();
+    c_tab_1.vPrint();
+
+    //ZAD4
+    std::cout << "\nZAD4" << std::endl;
+
+    c_tab_0.vSetValueAt(0, 0);
+    c_tab_0.vSetValueAt(1, 1);
+    c_tab_0.vSetValueAt(3, 3);
+
+    CTable c_tab_2;
+    c_tab_2 = c_tab_0 + c_tab_1;
+    c_tab_2.vPrint();
+
+    //MODYFIKACJA
+    int width = 4;
+    int height = 5;
+
+    int **array = new int *[height];
+    for (int i = 0; i < height; i++) {
+        array[i] = new int[width];
     }
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
             array[i][j] = i + j + 1;
         }
     }
 
-    Matrix matrix1 = Matrix(array, 3, 3);
-    Matrix matrix2 = Matrix(array, 3, 3);
+    Matrix matrix1 = Matrix(array, width, height);
+    Matrix matrix2 = Matrix(array, width, height);
     Matrix matrix3 = matrix1 + matrix2;
     matrix1.print();
     std::cout << std::endl;
