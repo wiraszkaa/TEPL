@@ -1,6 +1,5 @@
 #include <iostream>
-#include "main.h"
-#include "cmath"
+#include "Lista1.h"
 
 //ZAD 1
 void v_alloc_table_fill_34(int iSize) {
@@ -142,7 +141,9 @@ void v_mod_tab(CTable c_tab, int iNewSize) {
     c_tab.bSetNewSize(iNewSize);
 }
 // TESTY
-/*int main() {
+int main() {
+    int SIZE_X = 5;
+    int SIZE_Y = 3;
     // ZAD 1
     std::cout << "ZAD1" << std::endl;
     int size = 3;
@@ -186,10 +187,10 @@ void v_mod_tab(CTable c_tab, int iNewSize) {
     CTable *pcCloneCTable;
     pcCloneCTable = c_tab.pcClone();
 
-    int iNewSize = 2;
-    v_mod_tab(c_tab, iNewSize);
+    int newSize = 3;
+    v_mod_tab(c_tab, newSize);
+    v_mod_tab(pcCloneCTable, newSize);
     c_tab.printSize();
-    v_mod_tab(pcCloneCTable, iNewSize);
     pcCloneCTable->printSize();
 
     delete pcCloneCTable;
