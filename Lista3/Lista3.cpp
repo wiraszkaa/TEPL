@@ -11,8 +11,9 @@ public:
 
     ~CNodeStatic() {
         std::cout << "BUM: " << i_val << std::endl;
-        while (!v_children.empty()) {
-            v_children.pop_back();
+
+        if (pc_parent_node != NULL) {
+            delete pc_parent_node;
         }
     }
 
@@ -28,6 +29,30 @@ public:
         CNodeStatic child;
         child.pc_parent_node = this;
         v_children.push_back(child);
+    }
+
+    void vAddNewChild(CNodeStatic *pcNewChildNode) {
+        pcNewChildNode->pc_parent_node = this;
+        v_children.push_back(*pcNewChildNode);
+    }
+
+    bool bRemoveChild(CNodeStatic *pcChildNode) {
+        for (int i = 0; i < iGetChildrenNumber(); i++) {
+            if (&v_children.at(i) == pcChildNode) {
+                v_children.at(i).pc_parent_node = NULL;
+                v_children.erase(v_children.begin() + i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool bIsRoot() {
+        return pc_parent_node == NULL;
+    }
+
+    CNodeStatic *pcGetParent() {
+        return pc_parent_node;
     }
 
     CNodeStatic *pcGetChild(int iChildOffset) {
@@ -81,6 +106,21 @@ public:
     void vPrintTree() {
         c_root.vPrint();
         c_root.vPrintAllBelow();
+    }
+
+    bool bMoveSubtree(CNodeStatic *pcParentNode, CNodeStatic *pcNewChildNode) {
+        if (pcParentNode == NULL || pcNewChildNode == NULL) {
+            std::cout << "Null Value" << std::endl;
+            return false;
+        }
+        if (pcNewChildNode->bIsRoot()) {
+            std::cout << "New Child cannot be root" << std::endl;
+            return false;
+        }
+
+        pcNewChildNode->pcGetParent()->bRemoveChild(pcNewChildNode);
+        pcParentNode->vAddNewChild(pcNewChildNode);
+        return true;
     }
 
 private:
