@@ -9,14 +9,6 @@ public:
         pc_parent_node = NULL;
     }
 
-    ~CNodeStatic() {
-        std::cout << "BUM: " << i_val << std::endl;
-
-        if (pc_parent_node != NULL) {
-            delete pc_parent_node;
-        }
-    }
-
     void vSetValue(int iNewVal) {
         i_val = iNewVal;
     }
@@ -32,8 +24,9 @@ public:
     }
 
     void vAddNewChild(CNodeStatic *pcNewChildNode) {
-        pcNewChildNode->pc_parent_node = this;
-        v_children.push_back(*pcNewChildNode);
+        CNodeStatic child_clone(*pcNewChildNode);
+        child_clone.pc_parent_node = this;
+        v_children.push_back(child_clone);
     }
 
     bool bRemoveChild(CNodeStatic *pcChildNode) {
@@ -106,6 +99,7 @@ public:
     void vPrintTree() {
         c_root.vPrint();
         c_root.vPrintAllBelow();
+        std::cout << std::endl;
     }
 
     bool bMoveSubtree(CNodeStatic *pcParentNode, CNodeStatic *pcNewChildNode) {
@@ -118,8 +112,8 @@ public:
             return false;
         }
 
-        pcNewChildNode->pcGetParent()->bRemoveChild(pcNewChildNode);
         pcParentNode->vAddNewChild(pcNewChildNode);
+        pcNewChildNode->pcGetParent()->bRemoveChild(pcNewChildNode);
         return true;
     }
 
@@ -135,11 +129,8 @@ public:
     };
 
     ~CNodeDynamic() {
-        if (pc_parent_node != NULL) {
-            delete pc_parent_node;
-        }
-        while(!v_children.empty()) {
-            v_children.pop_back();
+        for (int i = 0; i < iGetChildrenNumber(); i++) {
+            delete v_children.at(i);
         }
     }
 
@@ -155,6 +146,30 @@ public:
         CNodeDynamic *child = new CNodeDynamic();
         child->pc_parent_node = this;
         v_children.push_back(child);
+    }
+
+    void vAddNewChild(CNodeDynamic *pcNewChildNode) {
+        pcNewChildNode->pc_parent_node = this;
+        v_children.push_back(pcNewChildNode);
+    }
+
+    bool bRemoveChild(CNodeDynamic *pcChildNode) {
+        for (int i = 0; i < iGetChildrenNumber(); i++) {
+            if (v_children.at(i) == pcChildNode) {
+                v_children.at(i)->pc_parent_node = NULL;
+                v_children.erase(v_children.begin() + i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool bIsRoot() {
+        return pc_parent_node == NULL;
+    }
+
+    CNodeDynamic *pcGetParent() {
+        return pc_parent_node;
     }
 
     CNodeDynamic *pcGetChild(int iChildOffset) {
@@ -189,6 +204,10 @@ private:
 
 class CTreeDynamic {
 public:
+    CTreeDynamic() {
+        pc_root = new CNodeDynamic();
+    }
+
     ~CTreeDynamic() {
         delete pc_root;
     }
@@ -200,13 +219,29 @@ public:
     void vPrintTree() {
         pc_root->vPrint();
         pc_root->vPrintAllBelow();
+        std::cout << std::endl;
+    }
+
+    bool bMoveSubtree(CNodeDynamic *pcParentNode, CNodeDynamic *pcNewChildNode) {
+        if (pcParentNode == NULL || pcNewChildNode == NULL) {
+            std::cout << "Null Value" << std::endl;
+            return false;
+        }
+        if (pcNewChildNode->bIsRoot()) {
+            std::cout << "New Child cannot be root" << std::endl;
+            return false;
+        }
+
+        pcNewChildNode->pcGetParent()->bRemoveChild(pcNewChildNode);
+        pcParentNode->vAddNewChild(pcNewChildNode);
+        return true;
     }
 
 private:
     CNodeDynamic *pc_root;
 };
 
-int main() {
+void zad23() {
     std::cout << "ZAD2" << std::endl;
     CNodeStatic c_root;
 
@@ -230,8 +265,105 @@ int main() {
 
     c_root.vPrintAllBelow();
 
-    std::cout << "ZAD3" << std::endl;
+    std::cout << "\nZAD3" << std::endl;
     c_root.pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vPrintUp();
+}
+
+void zad6() {
+    std::cout << "\nZAD6" << std::endl;
+    std::cout << "Static" << std::endl;
+    CTreeStatic c_tree1;
+    c_tree1.pcGetRoot()->vAddNewChild();
+    c_tree1.pcGetRoot()->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(0)->vSetValue(101);
+    c_tree1.pcGetRoot()->pcGetChild(1)->vSetValue(102);
+
+    c_tree1.pcGetRoot()->pcGetChild(0)->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(0)->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vSetValue(1011);
+    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(1)->vSetValue(1012);
+
+    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vSetValue(10111);
+
+    c_tree1.pcGetRoot()->pcGetChild(1)->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(1)->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(1)->pcGetChild(0)->vSetValue(1021);
+    c_tree1.pcGetRoot()->pcGetChild(1)->pcGetChild(1)->vSetValue(1022);
+
+    c_tree1.vPrintTree();
+
+    CTreeStatic c_tree2;
+    c_tree2.pcGetRoot()->vAddNewChild();
+    c_tree2.pcGetRoot()->vAddNewChild();
+    c_tree2.pcGetRoot()->pcGetChild(0)->vSetValue(201);
+    c_tree2.pcGetRoot()->pcGetChild(1)->vSetValue(202);
+
+    c_tree2.pcGetRoot()->pcGetChild(0)->vAddNewChild();
+    c_tree2.pcGetRoot()->pcGetChild(0)->vAddNewChild();
+    c_tree2.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vSetValue(2011);
+    c_tree2.pcGetRoot()->pcGetChild(0)->pcGetChild(1)->vSetValue(2012);
+
+    c_tree2.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vAddNewChild();
+    c_tree2.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vSetValue(20111);
+
+    c_tree2.pcGetRoot()->pcGetChild(1)->vAddNewChild();
+    c_tree2.pcGetRoot()->pcGetChild(1)->vAddNewChild();
+    c_tree2.pcGetRoot()->pcGetChild(1)->pcGetChild(0)->vSetValue(2021);
+    c_tree2.pcGetRoot()->pcGetChild(1)->pcGetChild(1)->vSetValue(2022);
+
+    c_tree2.vPrintTree();
+
+    c_tree1.bMoveSubtree(c_tree1.pcGetRoot(), c_tree2.pcGetRoot()->pcGetChild(0));
+    c_tree1.vPrintTree();
+    c_tree2.vPrintTree();
+
+    std::cout << "\nDynamic" << std::endl;
+
+    CTreeDynamic c_treed1;
+    c_treed1.pcGetRoot()->vAddNewChild();
+    c_treed1.pcGetRoot()->vAddNewChild();
+    c_treed1.pcGetRoot()->pcGetChild(0)->vSetValue(101);
+    c_treed1.pcGetRoot()->pcGetChild(1)->vSetValue(102);
+
+    c_treed1.pcGetRoot()->pcGetChild(0)->vAddNewChild();
+    c_treed1.pcGetRoot()->pcGetChild(0)->vAddNewChild();
+    c_treed1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vSetValue(1011);
+    c_treed1.pcGetRoot()->pcGetChild(0)->pcGetChild(1)->vSetValue(1012);
+
+    c_treed1.pcGetRoot()->pcGetChild(1)->vAddNewChild();
+    c_treed1.pcGetRoot()->pcGetChild(1)->vAddNewChild();
+    c_treed1.pcGetRoot()->pcGetChild(1)->pcGetChild(0)->vSetValue(1021);
+    c_treed1.pcGetRoot()->pcGetChild(1)->pcGetChild(1)->vSetValue(1022);
+
+    c_treed1.vPrintTree();
+
+    CTreeDynamic c_treed2;
+    c_treed2.pcGetRoot()->vAddNewChild();
+    c_treed2.pcGetRoot()->vAddNewChild();
+    c_treed2.pcGetRoot()->pcGetChild(0)->vSetValue(201);
+    c_treed2.pcGetRoot()->pcGetChild(1)->vSetValue(202);
+
+    c_treed2.pcGetRoot()->pcGetChild(0)->vAddNewChild();
+    c_treed2.pcGetRoot()->pcGetChild(0)->vAddNewChild();
+    c_treed2.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vSetValue(2011);
+    c_treed2.pcGetRoot()->pcGetChild(0)->pcGetChild(1)->vSetValue(2012);
+
+    c_treed2.pcGetRoot()->pcGetChild(1)->vAddNewChild();
+    c_treed2.pcGetRoot()->pcGetChild(1)->vAddNewChild();
+    c_treed2.pcGetRoot()->pcGetChild(1)->pcGetChild(0)->vSetValue(2021);
+    c_treed2.pcGetRoot()->pcGetChild(1)->pcGetChild(1)->vSetValue(2022);
+
+    c_treed2.vPrintTree();
+
+    c_treed1.bMoveSubtree(c_treed1.pcGetRoot(), c_treed2.pcGetRoot()->pcGetChild(0));
+    c_treed1.vPrintTree();
+    c_treed2.vPrintTree();
+}
+
+int main() {
+    zad23();
+    zad6();
 
     std::cout << std::endl;
     return 0;
