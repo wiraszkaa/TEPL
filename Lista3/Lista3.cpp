@@ -1,12 +1,18 @@
 #include <iostream>
 #include <vector>
-#include "Lista3.h"
 
 class CNodeStatic {
 public:
     CNodeStatic() {
         i_val = 0;
         pc_parent_node = NULL;
+    }
+
+    ~CNodeStatic() {
+//        std::cout << "Destructing static node: " << i_val << std::endl;
+        while (!v_children.empty()) {
+            v_children.pop_back();
+        }
     }
 
     void vSetValue(int iNewVal) {
@@ -129,9 +135,11 @@ public:
     };
 
     ~CNodeDynamic() {
+        std::cout << "Destructing dynamic node: " << i_val << std::endl;
         for (int i = 0; i < iGetChildrenNumber(); i++) {
             delete v_children.at(i);
         }
+        v_children.clear();
     }
 
     void vSetValue(int iNewVal) {
@@ -196,10 +204,22 @@ public:
         }
     }
 
+    void vPrintUp() {
+        vPrint();
+        printUpHelper(pc_parent_node);
+    }
+
 private:
     std::vector<CNodeDynamic *> v_children;
     CNodeDynamic *pc_parent_node;
     int i_val;
+
+    void printUpHelper(CNodeDynamic *parent) {
+        if (parent != NULL) {
+            parent->vPrint();
+            printUpHelper(parent->pc_parent_node);
+        }
+    }
 };
 
 class CTreeDynamic {
@@ -255,8 +275,8 @@ void zad23() {
     c_root.pcGetChild(0)->pcGetChild(0)->vSetValue(11);
     c_root.pcGetChild(0)->pcGetChild(1)->vSetValue(12);
 
-    c_root.pcGetChild(0)->pcGetChild(0)->vAddNewChild();
-    c_root.pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vSetValue(111);
+//    c_root.pcGetChild(0)->pcGetChild(0)->vAddNewChild();
+//    c_root.pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vSetValue(111);
 
     c_root.pcGetChild(1)->vAddNewChild();
     c_root.pcGetChild(1)->vAddNewChild();
@@ -266,7 +286,7 @@ void zad23() {
     c_root.vPrintAllBelow();
 
     std::cout << "\nZAD3" << std::endl;
-    c_root.pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vPrintUp();
+    c_root.pcGetChild(0)->pcGetChild(0)->vPrintUp();
 }
 
 void zad6() {
@@ -283,8 +303,8 @@ void zad6() {
     c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vSetValue(1011);
     c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(1)->vSetValue(1012);
 
-    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vAddNewChild();
-    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vSetValue(10111);
+//    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vAddNewChild();
+//    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vSetValue(10111);
 
     c_tree1.pcGetRoot()->pcGetChild(1)->vAddNewChild();
     c_tree1.pcGetRoot()->pcGetChild(1)->vAddNewChild();
@@ -304,8 +324,8 @@ void zad6() {
     c_tree2.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vSetValue(2011);
     c_tree2.pcGetRoot()->pcGetChild(0)->pcGetChild(1)->vSetValue(2012);
 
-    c_tree2.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vAddNewChild();
-    c_tree2.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vSetValue(20111);
+//    c_tree2.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vAddNewChild();
+//    c_tree2.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vSetValue(20111);
 
     c_tree2.pcGetRoot()->pcGetChild(1)->vAddNewChild();
     c_tree2.pcGetRoot()->pcGetChild(1)->vAddNewChild();
