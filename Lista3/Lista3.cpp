@@ -23,6 +23,14 @@ public:
         return (v_children.size());
     }
 
+    int iGetValue() {
+        return i_val;
+    }
+
+    std::vector<CNodeStatic> cpGetChildren() {
+        return v_children;
+    }
+
     void vAddNewChild() {
         CNodeStatic child;
         child.pc_parent_node = this;
@@ -83,6 +91,13 @@ public:
         printUpHelper(pc_parent_node);
     }
 
+    void printPathUp(CNodeStatic *node) {
+        node->vPrint();
+        if (node->pcGetParent() != NULL) {
+            printPathUp(node->pcGetParent());
+        }
+    }
+
 private:
     std::vector<CNodeStatic> v_children;
     CNodeStatic *pc_parent_node;
@@ -123,8 +138,22 @@ public:
         return true;
     }
 
+    CNodeStatic *pcGetNode(int value) {
+        return getNodeHelper(&c_root, value);
+    }
+
 private:
     CNodeStatic c_root;
+
+    CNodeStatic *getNodeHelper (CNodeStatic *node, int value) {
+        if (node->iGetValue() == value) {
+            return node;
+        } else {
+            for (int i = 0; i < node->iGetChildrenNumber(); i++) {
+                return getNodeHelper(&node->cpGetChildren().at(i), value);
+            }
+        }
+    }
 };
 
 class CNodeDynamic {
@@ -381,9 +410,36 @@ void zad6() {
     c_treed2.vPrintTree();
 }
 
+void mod() {
+    std::cout << "MODIFICATION" << std::endl;
+    CTreeStatic c_tree1;
+    c_tree1.pcGetRoot()->vAddNewChild();
+    c_tree1.pcGetRoot()->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(0)->vSetValue(101);
+    c_tree1.pcGetRoot()->pcGetChild(1)->vSetValue(102);
+
+    c_tree1.pcGetRoot()->pcGetChild(0)->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(0)->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vSetValue(1011);
+    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(1)->vSetValue(1012);
+
+    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(0)->pcGetChild(0)->pcGetChild(0)->vSetValue(10111);
+
+    c_tree1.pcGetRoot()->pcGetChild(1)->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(1)->vAddNewChild();
+    c_tree1.pcGetRoot()->pcGetChild(1)->pcGetChild(0)->vSetValue(1021);
+    c_tree1.pcGetRoot()->pcGetChild(1)->pcGetChild(1)->vSetValue(1022);
+
+    c_tree1.pcGetRoot()->printPathUp(c_tree1.pcGetNode(10111));
+
+//    c_root.printPathUp(c_root.pcGetChild(0)->pcGetChild(0)->pcGetChild(0));
+}
+
 int main() {
-    zad23();
-    zad6();
+//    zad23();
+//    zad6();
+    mod();
 
     std::cout << std::endl;
     return 0;
