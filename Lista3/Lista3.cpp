@@ -27,7 +27,7 @@ public:
         return i_val;
     }
 
-    std::vector<CNodeStatic> cpGetChildren() {
+    std::vector<CNodeStatic> pcGetChildren() {
         return v_children;
     }
 
@@ -91,13 +91,6 @@ public:
         printUpHelper(pc_parent_node);
     }
 
-    void printPathUp(CNodeStatic *node) {
-        node->vPrint();
-        if (node->pcGetParent() != NULL) {
-            printPathUp(node->pcGetParent());
-        }
-    }
-
 private:
     std::vector<CNodeStatic> v_children;
     CNodeStatic *pc_parent_node;
@@ -123,6 +116,13 @@ public:
         std::cout << std::endl;
     }
 
+    void printPathUp(CNodeStatic *node) {
+        node->vPrint();
+        if (node->pcGetParent() != NULL) {
+            printPathUp(node->pcGetParent());
+        }
+    }
+
     bool bMoveSubtree(CNodeStatic *pcParentNode, CNodeStatic *pcNewChildNode) {
         if (pcParentNode == NULL || pcNewChildNode == NULL) {
             std::cout << "Null Value" << std::endl;
@@ -145,14 +145,20 @@ public:
 private:
     CNodeStatic c_root;
 
-    CNodeStatic *getNodeHelper (CNodeStatic *node, int value) {
+    CNodeStatic *getNodeHelper(CNodeStatic *node, int value) {
         if (node->iGetValue() == value) {
             return node;
-        } else {
-            for (int i = 0; i < node->iGetChildrenNumber(); i++) {
-                return getNodeHelper(&node->cpGetChildren().at(i), value);
+        }
+        if (node->iGetChildrenNumber() == 0) {
+            return NULL;
+        }
+        for (int i = 0; i < node->iGetChildrenNumber(); i++) {
+            CNodeStatic *child = getNodeHelper(&node->pcGetChildren().at(i), value);
+            if (child != NULL) {
+                return child;
             }
         }
+        return NULL;
     }
 };
 
@@ -431,9 +437,7 @@ void mod() {
     c_tree1.pcGetRoot()->pcGetChild(1)->pcGetChild(0)->vSetValue(1021);
     c_tree1.pcGetRoot()->pcGetChild(1)->pcGetChild(1)->vSetValue(1022);
 
-    c_tree1.pcGetRoot()->printPathUp(c_tree1.pcGetNode(10111));
-
-//    c_root.printPathUp(c_root.pcGetChild(0)->pcGetChild(0)->pcGetChild(0));
+    c_tree1.printPathUp(c_tree1.pcGetNode(10111));
 }
 
 int main() {
