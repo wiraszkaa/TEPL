@@ -7,7 +7,6 @@ template<typename T>
 class CNodeDynamic {
 public:
     CNodeDynamic() {
-        i_val = 0;
         pc_parent_node = NULL;
     };
 
@@ -44,7 +43,7 @@ public:
 private:
     std::vector<CNodeDynamic<T> *> v_children;
     CNodeDynamic<T> *pc_parent_node;
-    int i_val;
+    T i_val;
 
     void printUpHelper(CNodeDynamic *parent) {
         if (parent != NULL) {
