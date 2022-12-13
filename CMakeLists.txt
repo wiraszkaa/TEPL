@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(TEP)
 
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 11)
 
 add_executable(L1 Lista1/Lista1.cpp)
 add_executable(L2 Lista2/Lista2.cpp)

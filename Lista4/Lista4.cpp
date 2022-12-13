@@ -1,7 +1,7 @@
 #include "Lista4.h"
 
 int main() {
-    CTreeDynamic<int> c_treed1;
+    CTreeDynamic<float> c_treed1;
     c_treed1.pcGetRoot()->vSetValue(0);
     c_treed1.pcGetRoot()->vAddNewChild();
     c_treed1.pcGetRoot()->vAddNewChild();
@@ -20,7 +20,7 @@ int main() {
 
     c_treed1.vPrintTree();
 
-    CTreeDynamic<int> c_treed2;
+    CTreeDynamic<float> c_treed2;
     c_treed2.pcGetRoot()->vSetValue(0);
     c_treed2.pcGetRoot()->vAddNewChild();
     c_treed2.pcGetRoot()->vAddNewChild();
