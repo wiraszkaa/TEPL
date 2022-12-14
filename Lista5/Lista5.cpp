@@ -164,7 +164,7 @@ CTable CTable::operator+(CTable &&pcOther) {
         pointer += 1;
     }
 
-    CTable newCTable(s_name, newLength);
+    CTable newCTable(s_name + " + " + pcOther.s_name, newLength);
     newCTable.array = newArray;
 
     return newCTable;
@@ -221,7 +221,8 @@ int main() {
 
     CTable tab4;
 
-    tab4 = tab2 + tab3;
+//    tab4 = tab2 + tab3;
+    tab4 = std::move(tab2 + std::move(tab3));
     tab4.printSize();
 
     return 0;
