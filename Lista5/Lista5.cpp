@@ -215,6 +215,9 @@ void CTable::vSetValueAt(int iOffset, int iNewVal) {
 }
 
 int main() {
+    double test = 10;
+    CMySmartPointer<double> pointer(&test);
+
     CTable tab1("one", 1);
     CTable tab2("two", 2);
     CTable tab3("three", 3);
