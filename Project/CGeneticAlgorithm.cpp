@@ -8,6 +8,10 @@ CGeneticAlgorithm::CGeneticAlgorithm() {
     crossChance = 0.6;
 }
 
+CGeneticAlgorithm::~CGeneticAlgorithm() {
+    individuals.clear();
+}
+
 CGeneticAlgorithm::CGeneticAlgorithm(int iIterations, int iPopulationSize, float fMutChance, float fCrossChance) {
     iterations = iIterations;
     populationSize = iPopulationSize;
@@ -16,44 +20,52 @@ CGeneticAlgorithm::CGeneticAlgorithm(int iIterations, int iPopulationSize, float
 }
 
 void CGeneticAlgorithm::createPopulation(int gcLength) {
-    std::uniform_int_distribution<int> random(0, 100);
+    std::default_random_engine generator(rd());
+    std::uniform_int_distribution<int> random(0, 10);
     for (int i = 0; i < populationSize; i++) {
-        std::vector<bool> cGeneticCode;
+        std::vector<bool> geneticCode;
         for (int j = 0; j < gcLength; j++) {
-            if (random(generator) <= 50) {
-                cGeneticCode.push_back(true);
+            if (random(generator) <= 5) {
+                geneticCode.push_back(true);
             } else {
-                cGeneticCode.push_back(false);
+                geneticCode.push_back(false);
             }
         }
-        individuals[i] = new CIndividual(cGeneticCode, gcLength);
+        individuals.push_back(new CIndividual(geneticCode, gcLength));
     }
+
+    best = individuals[0];
 }
 
-CIndividual *CGeneticAlgorithm::chooseRandomIndividual() {
-    CIndividual * result;
+int CGeneticAlgorithm::chooseRandomIndividual(int skipped) {
+    std::default_random_engine generator(rd());
     std::uniform_int_distribution<int> random(0, populationSize - 1);
     int fIndex = random(generator);
-    result = individuals[fIndex];
+    while (fIndex == skipped) {
+        fIndex = random(generator);
+    }
 
     int sIndex = random(generator);
-    while (sIndex == fIndex) {
+    while (sIndex == fIndex || sIndex == skipped) {
         sIndex = random(generator);
     }
 
-    if (result->getQuality() < individuals[sIndex]->getQuality()) {
-        return individuals[sIndex];
+    if (individuals[fIndex]->getQuality() < individuals[sIndex]->getQuality()) {
+        return sIndex;
     }
 
-    return result;
+    return fIndex;
 }
 
 void CGeneticAlgorithm::crossPopulation() {
-    CIndividual * person1 = chooseRandomIndividual();
-    CIndividual * person2 = chooseRandomIndividual();
-    std::vector<CIndividual *> children = person1->cross(*person2);
-    individuals[0] = children[0];
-    individuals[1] = children[1];
+    std::vector<CIndividual*> nextPopulation;
+    for (int i = 0; i < populationSize; i += 2) {
+        int fIndex = chooseRandomIndividual(-1);
+        int sIndex = chooseRandomIndividual(fIndex);
+
+        individuals[fIndex]->cross(*individuals[sIndex], crossChance, nextPopulation);
+    }
+    individuals = nextPopulation;
 }
 
 void CGeneticAlgorithm::mutatePopulation() {
@@ -62,22 +74,35 @@ void CGeneticAlgorithm::mutatePopulation() {
     }
 }
 
-void CGeneticAlgorithm::setPopulationQuality(CKnapsackProblem & cKnapsackProblem) {
+void CGeneticAlgorithm::setPopulationQuality(CKnapsackProblem &cKnapsackProblem) {
     for (int i = 0; i < populationSize; i++) {
-        float quality = cKnapsackProblem.evaluate(individuals[i]->getGeneticCode());
-        individuals[i]->setQuality(quality);
-        std::cout << "Quality: " << quality << std::endl;
+        CIndividual *individual = individuals[i];
+        float quality = cKnapsackProblem.evaluate(individual->getGeneticCode());
+        individual->setQuality(quality);
+//        individual->print();
+//        std::cout << "Quality: " << quality << std::endl;
+
+        if (quality > best->getQuality()) {
+            best = individual;
+        }
     }
 }
 
-void CGeneticAlgorithm::start(CKnapsackProblem & cKnapsackProblem) {
-    std::cout << "Iteration 0\n" << std::endl;
+void CGeneticAlgorithm::start(CKnapsackProblem &cKnapsackProblem) {
+//    std::cout << "\nIteration 0\n" << std::endl;
     createPopulation(cKnapsackProblem.getItemsNumber());
     setPopulationQuality(cKnapsackProblem);
     for (int i = 0; i < iterations; i++) {
-        std::cout << "\nIteration " << i + 1 << "\n\n";
+//        std::cout << "\nIteration " << i + 1 << "\n\n";
         crossPopulation();
         mutatePopulation();
         setPopulationQuality(cKnapsackProblem);
     }
+    std::cout << "Best Result: " << best->getQuality() << " GC: ";
+    best->print();
+}
+
+void CGeneticAlgorithm::print() {
+    std::cout << "Iterations: " << iterations << "\nPopulation: " << populationSize << std::endl;
+    std::cout << "Mutation: " << mutChance << "\nCross: " << crossChance << std::endl;
 }

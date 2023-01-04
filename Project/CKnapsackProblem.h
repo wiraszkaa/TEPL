@@ -6,9 +6,10 @@ class CKnapsackProblem {
 public:
     CKnapsackProblem();
     CKnapsackProblem(int iItems, float fSize);
+    bool loadFromFile(const std::string& filePath);
     bool setSize(float dSize);
     bool setItemsNumber(int iItems);
-    bool setItem(int iOffset, float fValue, float fSize);
+    bool addItem(float fValue, float fSize);
     int getItemsNumber();
     void print();
     void printItem(int iOffset);
@@ -16,8 +17,6 @@ public:
 private:
     int items;
     float size;
-    float *sizes;
-    float *values;
-
-    void setItems(int iItems);
+    std::vector<float> sizes;
+    std::vector<float> values;
 };

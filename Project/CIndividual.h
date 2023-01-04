@@ -7,15 +7,18 @@
 class CIndividual {
 public:
     CIndividual();
+    ~CIndividual();
     CIndividual(std::vector<bool> cGeneticCode, int iLength);
     void setQuality(float fQuality);
     void mutate(float chance);
+    void print();
     float getQuality();
     std::vector<bool>& getGeneticCode();
-    std::vector<CIndividual*> cross(CIndividual & pcOther);
+    void cross(CIndividual & pcOther, float chance, std::vector<CIndividual*>  &individuals);
+
 private:
   std::vector<bool> geneticCode;
   int length;
   float quality;
-  std::default_random_engine generator;
+  std::random_device rd;
 };
